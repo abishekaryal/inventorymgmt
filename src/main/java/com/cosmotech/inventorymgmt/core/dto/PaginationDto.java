@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 public class PaginationDto {
@@ -14,4 +16,6 @@ public class PaginationDto {
 
     private int Size;
     private String keyword;
+
+
 }

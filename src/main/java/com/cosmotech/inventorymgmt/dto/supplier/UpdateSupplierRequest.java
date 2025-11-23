@@ -22,4 +22,5 @@ public class UpdateSupplierRequest {
     @NotBlank(message = "address cant be blank")
     private String address;
 
+
 }

@@ -2,6 +2,7 @@ package com.cosmotech.inventorymgmt.service;
 
 import com.cosmotech.inventorymgmt.core.dto.ApiResponse;
 import com.cosmotech.inventorymgmt.core.dto.PaginationDto;
+import com.cosmotech.inventorymgmt.core.service.FileService;
 import com.cosmotech.inventorymgmt.dto.supplier.CreateSupplierRequest;
 import com.cosmotech.inventorymgmt.dto.supplier.DeleteSupplierRequest;
 import com.cosmotech.inventorymgmt.dto.supplier.ListSupplierResponse;
@@ -12,12 +13,15 @@ import com.cosmotech.inventorymgmt.mapper.SupplierMapper;
 import com.cosmotech.inventorymgmt.repository.SupplierRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,25 +37,44 @@ public class SupplierServiceImpl implements SupplierService {
     private SupplierRepo supplierRepo;
     @Autowired
     private EmailTempletSevice emailTempletSevice;
+    @Autowired
+    private FileService fileService;
 
-    public SupplierServiceImpl(SupplierMapper supplierMapper, SupplierRepo supplierRepo) {
-        this.supplierMapper = supplierMapper;
-        this.supplierRepo = supplierRepo;
-    }
 
+
+    @CacheEvict(value = "users",allEntries = true)
     @Override
     @Transactional
-    public ResponseEntity<ApiResponse<?>> createSupplier(CreateSupplierRequest createSupplierRequest) {
+
+    public ApiResponse<?> createSupplier(CreateSupplierRequest createSupplierRequest, MultipartFile profilePicture) {
         Supplier supplier = supplierMapper.createSupplier(createSupplierRequest);
+
+        if(profilePicture!=null && !profilePicture.isEmpty()){
+            long maxSize = 10 * 1024 * 1024;
+            if (profilePicture.getSize() > maxSize){
+                throw new RuntimeException("file size is larger than max size");
+            }
+            String fileName = fileService.uploadFile(profilePicture);
+            supplier.setProfilePicture(fileName);
+        }
+
         supplierRepo.save(supplier);
+
         emailTempletSevice.sendWelcomeMail(supplier);
-        ApiResponse<Product> apiResponse = new ApiResponse<>(true, "Supplier added successfully", 200, LocalDateTime.now());
-        return ResponseEntity.ok(apiResponse);
+
+        return new ApiResponse<>(true, "Supplier added successfully", 200, LocalDateTime.now());
+
+
+
     }
 
     @Override
     @Transactional
-    public ResponseEntity<ApiResponse<?>> listSupplier(PaginationDto paginationDto) {
+    @Cacheable(
+            value = "users",
+            key = "#paginationDto.page + '-' + #paginationDto.size + '-' + (#paginationDto.keyword != null ? #paginationDto.keyword : '')"
+    )
+    public ApiResponse<?> listSupplier(PaginationDto paginationDto) {
         Pageable pageable = PageRequest.of(paginationDto.getPage(), paginationDto.getSize());
         Page<Supplier> suppliers;
         if (paginationDto.getKeyword() != null && !paginationDto.getKeyword().trim().isEmpty()) {
@@ -61,13 +84,14 @@ public class SupplierServiceImpl implements SupplierService {
         }
         List<ListSupplierResponse> listSupplierResponses = supplierMapper.listSupplierResponses(suppliers);
 
-        ApiResponse<?> apiResponse = new ApiResponse(true, "supplier listed successful", 200, LocalDateTime.now(), listSupplierResponses);
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    return new ApiResponse<>(true, "supplier listed successful", 200, LocalDateTime.now(), listSupplierResponses);
+
     }
 
+    @CacheEvict(value = "users",allEntries = true)
     @Override
     @Transactional
-    public ResponseEntity<ApiResponse<?>> updateSupplier(UpdateSupplierRequest updateSupplierRequest) {
+    public ApiResponse<?> updateSupplier(UpdateSupplierRequest updateSupplierRequest) {
         Optional<Supplier> supplier = supplierRepo.findById(updateSupplierRequest.getId());
         Supplier updateSupplier = supplier.get();
         updateSupplier.setName(updateSupplier.getName());
@@ -75,8 +99,8 @@ public class SupplierServiceImpl implements SupplierService {
         updateSupplier.setPhone(updateSupplier.getPhone());
         updateSupplier.setEmail(updateSupplier.getEmail());
         supplierRepo.save(updateSupplier);
-        ApiResponse<?> response = new ApiResponse<>(true, "supplier update successfully", 200, LocalDateTime.now());
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+       return new ApiResponse<>(true, "supplier update successfully", 200, LocalDateTime.now());
+
     }
 
     @Override

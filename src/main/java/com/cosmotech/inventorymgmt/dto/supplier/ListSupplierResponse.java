@@ -8,11 +8,12 @@ import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class ListSupplierResponse {
+public class ListSupplierResponse implements Serializable {
 
     private Integer id;
     private String name;

@@ -9,6 +9,7 @@ import com.cosmotech.inventorymgmt.entity.Product;
 import com.cosmotech.inventorymgmt.entity.Supplier;
 import jakarta.transaction.Transactional;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ public abstract class SupplierMapper {
        supplier.setEmail(createSupplierRequest.getEmail());
        return supplier;
     }
+
     public abstract ListSupplierResponse listSupplierResponse(Supplier supplier);
     public List<ListSupplierResponse> listSupplierResponses (Page<Supplier> suppliers) {
         return suppliers.getContent().stream().map(this::listSupplierResponse).collect(Collectors.toList());

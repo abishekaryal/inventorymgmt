@@ -6,7 +6,9 @@ import com.cosmotech.inventorymgmt.core.dto.PaginationDto;
 import com.cosmotech.inventorymgmt.dto.product.request.DeleteProductRequest;
 import com.cosmotech.inventorymgmt.dto.UpdateProductResponse;
 import com.cosmotech.inventorymgmt.dto.product.request.ViewProductRequest;
+import com.cosmotech.inventorymgmt.dto.supplier.CreateSupplierRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductService {
     ResponseEntity<ApiResponse<?>> createProduct (AddProductRequest addProductRequest) ;

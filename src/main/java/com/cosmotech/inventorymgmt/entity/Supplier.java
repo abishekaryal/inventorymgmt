@@ -27,6 +27,9 @@ public class Supplier {
     @Column(nullable = false,name = "email")
     private String email;
 
+    @Column(nullable = false,name = "profile_picture")
+    private String profilePicture;
+
     @Column(nullable = false,name = "phone")
     private String phone;
 

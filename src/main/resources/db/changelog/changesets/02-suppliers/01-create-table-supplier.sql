@@ -14,3 +14,8 @@ CREATE TABLE IF NOT EXISTS`supplier`
     CONSTRAINT pk_suppliers PRIMARY KEY(id)
 
     );
+-- changeset abishek.aryal:supplier-alter-v1      context:dev
+ALTER table supplier
+ADD COLUMN  profile_picture VARCHAR(255) NOT NULL;
+
+
