@@ -14,6 +14,6 @@ public class AddProductRequest {
     private Double price;
     @NotBlank(message = "Quantity cant be blank")
     private String quantity;
-//    @NotNull(message = "supplier cannot be null")
-//    private int supplierId;
+    @NotNull(message = "supplier cannot be null")
+    private int supplierId;
 }

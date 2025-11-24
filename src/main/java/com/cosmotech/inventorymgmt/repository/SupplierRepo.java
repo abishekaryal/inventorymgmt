@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
 @Repository
 public interface SupplierRepo extends JpaRepository<Supplier,Integer> {
@@ -17,6 +18,7 @@ public interface SupplierRepo extends JpaRepository<Supplier,Integer> {
         """)
     Page<Supplier> searchSuppliers (String keyword, Pageable pageable);
 
+    Optional<Supplier> findByEmail(String email);
 }
 
 

@@ -49,5 +49,11 @@ public class Supplier {
 
     @OneToMany(mappedBy = "supplier")
     private List<Product> products;
+
+    @Column(nullable = false,name ="role")
+    private String role;
+
+    @Column(nullable = false,name = "password")
+    private String password;
 }
 

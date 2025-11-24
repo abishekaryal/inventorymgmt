@@ -18,4 +18,13 @@ CREATE TABLE IF NOT EXISTS`supplier`
 ALTER table supplier
 ADD COLUMN  profile_picture VARCHAR(255) NOT NULL;
 
+-- changeset abishek.aryal:supplier-alter-v2      context:dev
+ALTER table supplier
+ADD COLUMN role VARCHAR(255) NOT NULL ;
+
+-- changeset abishek.aryal:supplier-alter-v3      context:dev
+ALTER table supplier
+    ADD COLUMN password VARCHAR(255) NOT NULL ;
+
+
 
