@@ -19,7 +19,8 @@ public class CreateSupplierRequest {
     private String phone;
     @NotBlank(message = "address cant be blank")
     private String address;
-
+    @NotBlank(message = "msz cant be blank")
+    private String password;
 
 
 }

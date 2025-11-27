@@ -12,19 +12,27 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,componentModel = MappingConstants.ComponentModel.SPRING)
 public abstract class SupplierMapper {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
     public Supplier createSupplier(CreateSupplierRequest createSupplierRequest) {
         Supplier supplier = new Supplier();
        supplier.setName(createSupplierRequest.getName());
        supplier.setAddress(createSupplierRequest.getAddress());
        supplier.setPhone(createSupplierRequest.getPhone());
        supplier.setEmail(createSupplierRequest.getEmail());
+       supplier.setPassword(passwordEncoder.encode(createSupplierRequest.getPassword()));
+       supplier.setRole("SUPPLIER");
        return supplier;
     }
 
