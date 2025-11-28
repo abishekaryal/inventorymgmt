@@ -17,6 +17,13 @@ public class GlobalExceptionHandler {
         ApiResponse<?> apiResponse = new ApiResponse<>(false, e.getMessage(), HttpStatus.CONFLICT.value(), LocalDateTime.now());
         return new ResponseEntity<>(apiResponse, HttpStatus.CONFLICT);
     }
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ApiResponse<?>> handelInvalidTokenException (InvalidTokenException e) {
+        ApiResponse<?> apiResponse = new ApiResponse<>(false, e.getMessage(), HttpStatus.UNAUTHORIZED.value(), LocalDateTime.now());
+        return new ResponseEntity<>(apiResponse, HttpStatus.UNAUTHORIZED);
+    }
+
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<?>> handleValidationErrors(MethodArgumentNotValidException e) {

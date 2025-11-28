@@ -3,6 +3,8 @@ package com.cosmotech.inventorymgmt.controller;
 import com.cosmotech.inventorymgmt.core.dto.ApiResponse;
 import com.cosmotech.inventorymgmt.dto.supplier.LoginRequest;
 import com.cosmotech.inventorymgmt.service.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,8 +25,13 @@ public class AuthenticationController {
     private AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> login(@RequestBody @Valid LoginRequest loginRequest) {
+    public ResponseEntity<ApiResponse<?>> login(@RequestBody @Valid LoginRequest loginRequest) {
         ApiResponse<?> apiResponse= authenticationService.authenticate(loginRequest);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+    @PostMapping("/refreshToken")
+    public ResponseEntity<ApiResponse<?>> refreshToken(HttpServletRequest request, HttpServletResponse response) {
+        ApiResponse<?> apiResponse= authenticationService.refreshToken(request,response);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 }
